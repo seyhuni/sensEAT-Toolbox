@@ -83,6 +83,41 @@ function pushbutton7_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+global r_peak_pos_last; global q_peak_pos_last; global p_peak_pos_last;
+global t_peak_pos_last; global t_peak_start_pos; global t_peak_final_pos; global p_peak_start_pos;
+global p_peak_final_pos; global s_peak_pos_last; 
+
+BB=horzcat(p_peak_start_pos, p_peak_pos_last, p_peak_final_pos, q_peak_pos_last, r_peak_pos_last, s_peak_pos_last, t_peak_start_pos, t_peak_pos_last, t_peak_final_pos);
+
+filename = 'ECG Parameters.xlsx';
+ponsetText={'P peak onset';BB(1:length(p_peak_start_pos))'};
+xlswrite(filename,ponsetText,1,'A1')
+xlswrite(filename,ponsetText{2,1},1,'A2')
+ppeakText={'P peak ';BB(length(p_peak_start_pos)+1:length(p_peak_start_pos)+length(p_peak_pos_last))'};
+xlswrite(filename,ppeakText,1,'B1')
+xlswrite(filename,ppeakText{2,1},1,'B2')
+poffsetText={'P peak offset ';BB(length(p_peak_pos_last)+length(p_peak_start_pos)+1:length(p_peak_start_pos)+length(p_peak_pos_last)+length(p_peak_final_pos))'};
+xlswrite(filename,poffsetText,1,'C1')
+xlswrite(filename,poffsetText{2,1},1,'C2')
+qpointText={'Q point ';BB(length(p_peak_final_pos)+length(p_peak_pos_last)+length(p_peak_start_pos)+1:length(p_peak_start_pos)+length(p_peak_pos_last)+length(p_peak_final_pos)+length(q_peak_pos_last))'};
+xlswrite(filename,qpointText,1,'D1')
+xlswrite(filename,qpointText{2,1},1,'D2')
+rpeakText={'R peak ';BB(length(q_peak_pos_last)+length(p_peak_final_pos)+length(p_peak_pos_last)+length(p_peak_start_pos)+1:length(p_peak_start_pos)+length(p_peak_pos_last)+length(p_peak_final_pos)+length(q_peak_pos_last)+length(r_peak_pos_last))'};
+xlswrite(filename,rpeakText,1,'E1')
+xlswrite(filename,rpeakText{2,1},1,'E2')
+spointText={'S point ';BB(length(r_peak_pos_last)+length(q_peak_pos_last)+length(p_peak_final_pos)+length(p_peak_pos_last)+length(p_peak_start_pos)+1:length(p_peak_start_pos)+length(p_peak_pos_last)+length(p_peak_final_pos)+length(q_peak_pos_last)+length(r_peak_pos_last)+length(s_peak_pos_last))'};
+xlswrite(filename,spointText,1,'F1')
+xlswrite(filename,spointText{2,1},1,'F2')
+tpeakonsetText={'T peak onset ';BB(length(s_peak_pos_last)+length(r_peak_pos_last)+length(q_peak_pos_last)+length(p_peak_final_pos)+length(p_peak_pos_last)+length(p_peak_start_pos)+1:length(p_peak_start_pos)+length(p_peak_pos_last)+length(p_peak_final_pos)+length(q_peak_pos_last)+length(r_peak_pos_last)+length(s_peak_pos_last)+length(t_peak_start_pos))'};
+xlswrite(filename,tpeakonsetText,1,'G1')
+xlswrite(filename,tpeakonsetText{2,1},1,'G2')
+tpeakText={'T peak ';BB(length(t_peak_start_pos)+length(s_peak_pos_last)+length(r_peak_pos_last)+length(q_peak_pos_last)+length(p_peak_final_pos)+length(p_peak_pos_last)+length(p_peak_start_pos)+1:length(p_peak_start_pos)+length(p_peak_pos_last)+length(p_peak_final_pos)+length(q_peak_pos_last)+length(r_peak_pos_last)+length(s_peak_pos_last)+length(t_peak_start_pos)+length(t_peak_pos_last))'};
+xlswrite(filename,tpeakText,1,'H1')
+xlswrite(filename,tpeakText{2,1},1,'H2')
+tpeakoffsetText={'T peak offset';BB(length(t_peak_pos_last)+length(t_peak_start_pos)+length(s_peak_pos_last)+length(r_peak_pos_last)+length(q_peak_pos_last)+length(p_peak_final_pos)+length(p_peak_pos_last)+length(p_peak_start_pos)+1:length(p_peak_start_pos)+length(p_peak_pos_last)+length(p_peak_final_pos)+length(q_peak_pos_last)+length(r_peak_pos_last)+length(s_peak_pos_last)+length(t_peak_start_pos)+length(t_peak_pos_last)+length(t_peak_final_pos))'};
+xlswrite(filename,tpeakoffsetText,1,'I1')
+xlswrite(filename,tpeakoffsetText{2,1},1,'I2')
+
 
 % --- Executes on button press in pushbutton13.
 function pushbutton13_Callback(hObject, eventdata, handles)
@@ -90,6 +125,17 @@ function pushbutton13_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+global exhale_pos_last; global inhale_pos3;
+
+CC=horzcat(exhale_pos_last,inhale_pos3);
+
+filename = 'Breathing Parameters.xlsx';
+exhaleText={'Exhale Points';CC(1:length(exhale_pos_last))'};
+xlswrite(filename,exhaleText,1,'A1')
+xlswrite(filename,exhaleText{2,1},1,'A2')
+inhaleText={'Inhale Points';CC(length(exhale_pos_last)+1:length(exhale_pos_last)+length(inhale_pos3))'};
+xlswrite(filename,inhaleText,1,'B1')
+xlswrite(filename,inhaleText{2,1},1,'B2')
 
 % --- Executes on button press in pushbutton18.
 function pushbutton18_Callback(hObject, eventdata, handles)
@@ -695,8 +741,8 @@ function pushbutton12_Callback(hObject, eventdata, handles)
 global nasaldata; global respiratoryRecording_2; global fs;
 
 respiratoryRecording=nasaldata-mean(nasaldata);
-[c,l]=wavedec(respiratoryRecording,16,'db6');
-a16 = wrcoef('a',c,l,'db6',16);
+[c,l]=wavedec(respiratoryRecording,16,'sym8');
+a16 = wrcoef('a',c,l,'sym8',16);
 respiratoryRecording_=respiratoryRecording-a16;
 fl=0.1; fu=0.5; % lower and upper cutoff freqs
 wcl=2*fl/fs;
